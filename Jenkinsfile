@@ -3,7 +3,12 @@ pipeline{
   stages{
     stage("Create PagerDuty Maintenance Window"){
       steps{
-        sh "echo hello world"
+        sh "echo Before Ansible"
+        ansiColor('xterm'){
+          ansiblePlaybook(
+            playbook: 'task-pagerduty-maintenance.yml'
+          )
+        }
       }
     }
   }
