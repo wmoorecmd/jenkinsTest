@@ -1,0 +1,12 @@
+---
+- hosts: localhost
+
+  tasks:
+    - name: Create pagerduty maintenance window
+      community.general.pagerduty:
+        hours: 0
+        minutes: 5
+        state: running
+        token: u+PRndWfgyC_EBDz1vyw
+        service: P77YHJX
+        requester_id: PYSN9IH
