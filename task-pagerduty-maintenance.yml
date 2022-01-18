@@ -10,6 +10,3 @@
         token: "{{ api_token }}"
         service: "{{ service_id }}"
         requester_id: "{{ requester_user_id }}"
-        # token: u+PRndWfgyC_EBDz1vyw
-        # service: P77YHJX
-        # requester_id: PYSN9IH
