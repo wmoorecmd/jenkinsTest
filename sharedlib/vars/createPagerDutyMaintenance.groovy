@@ -10,15 +10,16 @@
 */
 
 Boolean call(Map pagerDutyArgs){
+    int hours = 0, minutes = 5
+    String desc = "Created by ansible"
+    String extras = "api_token=${pagerDutyArgs.token}"
+
     //return false when any required argument is missing
     if(!(pagerDutyArgs.containsKey('env') && pagerDutyArgs.containsKey('token'))){
         return false
     }
 
-    int hours = 0, minutes = 5
-    String extras = "api_token=${pagerDutyArgs.token}"
-
-    //build the extra argument string
+    //assign values based off of required parameters
     if(pagerDutyArgs.env == 'prod'){
         //TODO use actual values here
         extras += ' service_id=000000'
@@ -31,14 +32,15 @@ Boolean call(Map pagerDutyArgs){
         return false
     }
 
-    //assign values for minutes and hours
+    //assign values for optional parameters
     if(pagerDutyArgs.containsKey('hours')) hours = pagerDutyArgs.hours
     extras += " hours=${hours}"
 
     if(pagerDutyArgs.containsKey('minutes')) minutes = pagerDutyArgs.minutes
     extras += " minutes=${minutes}"
 
-    if(pagerDutyArgs.containsKey('desc')) extras += " desc=${pagerDutyArgs.desc}"
+    if(pagerDutyArgs.containsKey('desc')) desc = pagerDutyArgs.desc
+    extras += " desc=${desc}"
 
     //add e flag, quotes
     extras = "-e '${extras}'"
