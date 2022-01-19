@@ -40,7 +40,7 @@ Boolean call(Map pagerDutyArgs){
     extras += " minutes=${minutes}"
 
     if(pagerDutyArgs.containsKey('desc')) desc = pagerDutyArgs.desc
-    extras += " desc=${desc}"
+    extras += " desc=\"${desc}\""
 
     //add e flag, quotes
     extras = "-e '${extras}'"
