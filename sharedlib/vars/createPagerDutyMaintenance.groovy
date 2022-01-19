@@ -32,10 +32,10 @@ Boolean call(Map pagerDutyArgs){
 
     //assign values for minutes and hours
     if(pagerDutyArgs.containsKey("hours")) hours = pagerDutyArgs.hours
-    extras += "hours=${hours}"
+    extras += " hours=${hours}"
 
     if(pagerDutyArgs.containsKey("minutes")) minutes = pagerDutyArgs.minutes
-    extras += "minutes=${minutes}"
+    extras += " minutes=${minutes}"
 
     //add e flag, quotes
     extras = "-e '${extras}'"
