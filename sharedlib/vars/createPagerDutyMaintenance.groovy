@@ -13,7 +13,7 @@ Boolean call(Map pagerDutyArgs){
         return false
     }
 
-    String extras = "-e api_token=${pagerDutyArgs.token}"
+    String extras = "-e 'api_token=${pagerDutyArgs.token}"
 
     //build the extra argument string
     if(pagerDutyArgs.env == 'prod'){
@@ -27,6 +27,9 @@ Boolean call(Map pagerDutyArgs){
         //TODO maybe create a class to get an error message back
         return false
     }
+
+    //add closing quote
+    extras += "'"
 
     //run ansible
     ansiblePlaybook(
