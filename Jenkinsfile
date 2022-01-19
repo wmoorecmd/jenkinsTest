@@ -15,13 +15,6 @@ pipeline{
             token: '$PAGERDUTY_API_KEY'
           )
         }
-        // ansiColor('xterm'){
-        //   ansiblePlaybook(
-        //     playbook: 'task-pagerduty-maintenance.yml',
-        //     colorized: true,
-        //     extras: '-e "api_token=$PAGERDUTY_API_KEY service_id=$PAGERDUTY_SERVICE_ID requester_user_id=$PAGERDUTY_USER_ID"'
-        //   )
-        // }
       }
     }
   }
