@@ -4,7 +4,8 @@
  * Arguments
  *  - env: dev prod
  *  - token: the PagerDuty API Token
- *
+ *  - minutes: minute duration of maintenance - optional (default to 5)
+ *  - hours: hour duration of maintenance - optional (default to 0)
 */
 
 Boolean call(Map pagerDutyArgs){
@@ -13,6 +14,7 @@ Boolean call(Map pagerDutyArgs){
         return false
     }
 
+    int hours = 0, minutes = 5
     String extras = "api_token=${pagerDutyArgs.token}"
 
     //build the extra argument string
@@ -28,9 +30,14 @@ Boolean call(Map pagerDutyArgs){
         return false
     }
 
-    //add e flag and quotes
-    extras = "-e '${extras}'"
-    
+    //assign values for minutes and hours
+    if(pagerDutyArgs.containsKey("hours")) hours = pagerDutyArgs.hours
+
+    if(pagerDutyArgs.containsKey("minutes")) minutes = pagerDutyArgs.minutes
+
+    //add e flag, quotes and minutes and hours
+    extras = "-e '${extras} hours=${hours} minutes=${minutes}'"
+
     //run ansible
     ansiblePlaybook(
             playbook: 'task-pagerduty-maintenance.yml',

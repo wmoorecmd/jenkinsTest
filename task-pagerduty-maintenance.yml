@@ -4,8 +4,8 @@
   tasks:
     - name: Create pagerduty maintenance window
       community.general.pagerduty:
-        hours: 0
-        minutes: 5
+        hours: "{{ hours }}"
+        minutes: "{{ minutes }}"
         state: running
         token: "{{ api_token }}"
         service: "{{ service_id }}"
