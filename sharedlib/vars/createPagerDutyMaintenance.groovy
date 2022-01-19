@@ -28,7 +28,7 @@ Boolean call(Map pagerDutyArgs){
         extras += ' service_id=P77YHJX'
         extras += ' requester_user_id=PYSN9IH'
     } else {
-        //TODO maybe create a class to get an error message back
+        //TODO some sort of error handling for an invalid choice
         return false
     }
 
