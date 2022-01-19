@@ -13,7 +13,7 @@ Boolean call(Map pagerDutyArgs){
         return false
     }
 
-    String extras = "api_token=${pagerDutyArgs.token}"
+    String extras = "-e api_token=${pagerDutyArgs.token}"
 
     //build the extra argument string
     if(pagerDutyArgs.env == 'prod'){
