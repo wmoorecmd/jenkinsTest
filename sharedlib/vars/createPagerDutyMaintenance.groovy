@@ -9,7 +9,7 @@
 */
 
 Boolean call(Map pagerDutyArgs){
-    //return false when any argument is missing
+    //return false when any required argument is missing
     if(!(pagerDutyArgs.containsKey('env') && pagerDutyArgs.containsKey('token'))){
         return false
     }
@@ -32,11 +32,13 @@ Boolean call(Map pagerDutyArgs){
 
     //assign values for minutes and hours
     if(pagerDutyArgs.containsKey("hours")) hours = pagerDutyArgs.hours
+    extras += "hours=${hours}"
 
     if(pagerDutyArgs.containsKey("minutes")) minutes = pagerDutyArgs.minutes
+    extras += "minutes=${minutes}"
 
-    //add e flag, quotes and minutes and hours
-    extras = "-e '${extras} hours=${hours} minutes=${minutes}'"
+    //add e flag, quotes
+    extras = "-e '${extras}'"
 
     //run ansible
     ansiblePlaybook(
