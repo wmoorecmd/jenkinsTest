@@ -6,6 +6,7 @@
  *  - token: the PagerDuty API Token
  *  - minutes: minute duration of maintenance - optional (default to 5)
  *  - hours: hour duration of maintenance - optional (default to 0)
+ *  - desc: a description of the reason for the window - optional (default to "Created by ansible")
 */
 
 Boolean call(Map pagerDutyArgs){
@@ -31,11 +32,13 @@ Boolean call(Map pagerDutyArgs){
     }
 
     //assign values for minutes and hours
-    if(pagerDutyArgs.containsKey("hours")) hours = pagerDutyArgs.hours
+    if(pagerDutyArgs.containsKey('hours')) hours = pagerDutyArgs.hours
     extras += " hours=${hours}"
 
-    if(pagerDutyArgs.containsKey("minutes")) minutes = pagerDutyArgs.minutes
+    if(pagerDutyArgs.containsKey('minutes')) minutes = pagerDutyArgs.minutes
     extras += " minutes=${minutes}"
+
+    if(pagerDutyArgs.containsKey('desc')) extras += " desc=${pagerDutyArgs.desc}"
 
     //add e flag, quotes
     extras = "-e '${extras}'"
