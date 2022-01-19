@@ -13,7 +13,9 @@ pipeline{
           createPagerDutyMaintenance(
             env: 'dev',
             token: '$PAGERDUTY_API_KEY',
-            minutes: 23
+            minutes: 23,
+            hours: 3,
+            desc: "Test Description right here"
           )
         }
       }
