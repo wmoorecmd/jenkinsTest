@@ -13,7 +13,7 @@ Boolean call(Map pagerDutyArgs){
         return false
     }
 
-    String extras = "-e 'api_token=${pagerDutyArgs.token}"
+    String extras = "api_token=${pagerDutyArgs.token}"
 
     //build the extra argument string
     if(pagerDutyArgs.env == 'prod'){
@@ -28,9 +28,9 @@ Boolean call(Map pagerDutyArgs){
         return false
     }
 
-    //add closing quote
-    extras += "'"
-
+    //add e flag and quotes
+    extras = "-e '${extras}'"
+    
     //run ansible
     ansiblePlaybook(
             playbook: 'task-pagerduty-maintenance.yml',
