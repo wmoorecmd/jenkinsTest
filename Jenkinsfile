@@ -2,7 +2,7 @@ pipeline{
   agent any
   stages{
     @Library('sharedlib')
-    stage("Create PagerDuty Maintenance Window"){
+    stage('Create PagerDuty Maintenance Window'){
       environment{
         PAGERDUTY_API_KEY = credentials("PAGERDUTY_API_KEY")
       }
