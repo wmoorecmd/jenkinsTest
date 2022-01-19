@@ -12,7 +12,7 @@
 Boolean call(Map pagerDutyArgs){
     int hours = 0, minutes = 5
     String desc = "Created by ansible"
-    String extras = "api_token=${pagerDutyArgs.token}"
+    String extras = 'api_token=$pagerDutyArgs.token'
 
     //return false when any required argument is missing
     if(!(pagerDutyArgs.containsKey('env') && pagerDutyArgs.containsKey('token'))){
