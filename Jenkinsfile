@@ -16,6 +16,7 @@ pipeline{
             hours: 3,
             desc: "Test Description right here"
           )
+          println(result)
           if(result){
             error("Failed to create PagerDuty maintenance window")
           }
