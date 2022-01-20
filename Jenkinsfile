@@ -17,7 +17,7 @@ pipeline{
             desc: "Test Description right here"
           )
           println(result)
-          if(result){
+          if(!result){
             error("Failed to create PagerDuty maintenance window")
           }
         }
