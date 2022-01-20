@@ -11,7 +11,6 @@ pipeline{
       steps{
         script{
           createPagerDutyMaintenance(
-            env: 'dev',
             token: '$PAGERDUTY_API_KEY',
             minutes: 23,
             hours: 3,
