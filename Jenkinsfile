@@ -16,7 +16,9 @@ pipeline{
             hours: 3,
             desc: "Test Description right here"
           )
-          error("Failed to create PagerDuty maintenance window")
+          if(result){
+            error("Failed to create PagerDuty maintenance window")
+          }
         }
       }
     }
