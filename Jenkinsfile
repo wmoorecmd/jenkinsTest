@@ -10,14 +10,13 @@ pipeline{
 
       steps{
         script{
-          result = createPagerDutyMaintenance(
+          ok = createPagerDutyMaintenance(
             token: '$PAGERDUTY_API_KEY',
             minutes: 23,
             hours: 3,
             desc: "Test Description right here"
           )
-          println(result)
-          if(!result){
+          if(!ok){
             error("Failed to create PagerDuty maintenance window")
           }
         }
