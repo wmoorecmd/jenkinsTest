@@ -1,0 +1,127 @@
+#!/usr/bin/env python3
+
+import subprocess, sys, getopt
+from zipfile import ZipFile
+from time import sleep
+
+def get_hostname():
+    hostname = subprocess.run(["hostname"], stdout=subprocess.PIPE, stdin=subprocess.PIPE)
+    hostname = hostname.stdout.decode("utf-8")
+    return hostname
+
+def gen_filename(lineWithTimestamp):
+    lineWithTimestamp = lineWithTimestamp.replace(":", "_")
+    lineWithTimestamp = lineWithTimestamp.replace("-", "_")
+    filename = lineWithTimestamp.replace(" ", "_")
+
+    # get the hostname
+    filename = filename + "_" + get_hostname().replace(".", "_")
+
+    filename = filename.replace("\n", "")
+    filename = filename + ".log"
+
+    return filename
+
+def get_log(filename):
+    logFile = open(filename, "r")
+    logFilePos = 0
+    prevLine = ""
+    lineWithTimestamp = ""
+    lastThreadDumpPos = 0
+
+    for line in logFile:
+        if "Full thread dump" in line:
+            lineWithTimestamp = prevLine
+            lastThreadDumpPos = logFilePos
+
+        logFilePos = logFilePos + len(line)
+        prevLine = line
+
+    logFile.seek(lastThreadDumpPos, 0)
+    log = lineWithTimestamp + logFile.read()
+    logFile.close()
+
+    outFileName = gen_filename(lineWithTimestamp)
+
+    return (outFileName, log)
+
+def write_log(filename, content):
+    fileOut = open(filename, "w")
+    fileOut.write(content)
+    fileOut.close()
+
+def arg_error():
+    print("Usage:\n ./dump_tomcat_threads -p <tomcat process id> -n <optional: number of samples (3 default)> -l <optional: path to log file> -o <optional: output zip name>")
+    sys.exit(2)
+
+def main(argv):
+    # process arguments
+    tomcatPID = 0
+    numSamples = 3
+    filename = "/var/log/tomcat/catalina.out"
+    output = ""
+    useDefaultOutput = True
+    pidGiven = False
+    logs = []
+
+    try:
+        opts, args = getopt.getopt(argv, "n:p:hl:o:", ["numsample", "pid", "help", "logfile", "output"])
+
+        if len(opts) == 0:
+            arg_error()
+
+    except getopt.GetoptError:
+        arg_error()
+
+    for opt, arg in opts:
+        if opt in ("-h", "-help"):
+            arg_error()
+
+        if opt in ("-p", "-pid"):
+            tomcatPID = arg
+            pidGiven = True
+
+        if opt in ("-n", "-samples"):
+            numSamples = int(arg)
+
+        if opt in ("-l", "-logfile"):
+            filename = arg
+
+        if opt in ("-o", "-output"):
+            output = arg
+            useDefaultOutput = False
+
+    if pidGiven == False:
+        arg_error()
+
+    # generate thread dumps
+    for i in range(numSamples):
+        subprocess.run(["kill", "-3", tomcatPID])
+        sleep(3)
+        logs.append(get_log(filename))
+        write_log(*logs[i])
+
+        # maybe make the sleep interval a parameter
+        if i < numSamples - 1:
+            sleep(30)
+
+    # Default output filename
+    if useDefaultOutput == True:
+        output = logs[0][0] + ".zip"
+
+    # zip files and delete them
+    zipOut = ZipFile("/tmp/" + output, "w")
+
+    for log in logs:
+        zipOut.write(log[0])
+
+    zipOut.close()
+
+    for log in logs:
+        subprocess.run(["rm", log[0]])
+
+    hostname = get_hostname().replace("\n", "")
+    print(f'Run \'scp {hostname}:/tmp/{output} .\' to download the logs')
+
+if __name__ == "__main__":
+    main(sys.argv[1:])
