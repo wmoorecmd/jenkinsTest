@@ -7,7 +7,7 @@ pipeline{
             steps{
                 script{
                     ok = dumpTomcatThreads(
-                        hostname = "${hostname}"
+                        hostname: "${hostname}"
                     )
                 }
             }
