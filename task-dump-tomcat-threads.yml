@@ -8,4 +8,4 @@
       register: tomcat_pid
 
     - name: Dump Tomcat Threads
-      ansible.builtin.shell: /usr/local/bin/dump_tomcat_threads "{{ tomcat_pid }}" "{{ samples | default(omit) }}" "{{ logfile | default(omit) }}" "{{ output | default(omit) }}"
+      ansible.builtin.shell: /usr/local/bin/dump_tomcat_threads "{{ tomcat_pid }}"

@@ -5,10 +5,7 @@ pipeline{
             steps{
                 script{
                     ok = dumpTomcatThreads(
-                        samples = "${samples}",
-                        logfile = "${logfile}",
-                        output = "${output}",
-                        inventory = "${inventory}"
+                        hostname = "${hostname}"
                     )
                 }
             }

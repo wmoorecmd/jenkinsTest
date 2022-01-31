@@ -7,7 +7,6 @@
 
 Boolean call(Map dumpTomcatArgs){
     String hostname = ""
-    String extras = ""
 
     if(dumpTomcatArgs.containsKey("hostname")) hostname = dumpTomcatArgs.hostname
 
