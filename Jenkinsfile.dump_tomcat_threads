@@ -3,7 +3,13 @@ pipeline{
     stages{
         stage('Dump Tomcat Threads'){
             steps{
-                
+                script{
+                    ok = dumpTomcatThreads(
+                        samples = 2,
+                        logfile = "/test/test",
+                        output = "testyzip.zip"
+                    )
+                }
             }
         }
     }

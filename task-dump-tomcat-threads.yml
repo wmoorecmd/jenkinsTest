@@ -1,0 +1,11 @@
+---
+- hosts: localhost?
+
+  tasks:
+    - name: Get Tomcat PID
+      community.general.pids:
+        name: tomcat
+      register: tomcat_pid
+
+    - name: Dump Tomcat Threads
+      ansible.builtin.shell: /usr/local/bin/dump_tomcat_threads "{{ tomcat_pid }}" "{{ samples | default(omit) }}" "{{ logfile | default(omit) }}" "{{ output | default(omit) }}"
