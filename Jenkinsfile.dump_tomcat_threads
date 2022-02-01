@@ -1,12 +1,13 @@
-@Library('sharedlib@main')_
-
 pipeline{
     agent any
     stages{
         stage('Dump Tomcat Threads'){
             steps{
                 script{
-                    ok = dumpTomcatThreads(
+                    runAnsible(
+                        app: "${app}",
+                        env: "${env}",
+                        playbook: "${task-dump-tomcat-threads.yml}",
                         hostname: "${hostname}"
                     )
                 }
