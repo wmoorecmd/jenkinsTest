@@ -12,8 +12,7 @@ pipeline{
         script{
           ok = createPagerDutyMaintenance(
             token: '$PAGERDUTY_API_KEY',
-            minutes: 23,
-            hours: 3,
+            env: 'dev',
             desc: "Test Description right here"
           )
           if(!ok){
