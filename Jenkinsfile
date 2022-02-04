@@ -13,7 +13,7 @@ pipeline{
 
       steps{
         //clean before build
-        cleanWs()
+        // cleanWs()
         script{
           ok = createPagerDutyMaintenance(
             token: '$PAGERDUTY_API_KEY',
