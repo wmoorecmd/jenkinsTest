@@ -2,9 +2,6 @@
 
 pipeline{
   agent any
-  options{
-    // skipDefaultCheckout(true)
-  }
   stages{
     stage('Create PagerDuty Maintenance Window'){
       environment{
