@@ -15,7 +15,7 @@ pipeline{
       }
     }
 
-    stage {
+    stage("Second Stage"){
       steps{
         script{
           print("sleeping for 10 secs")
@@ -25,7 +25,7 @@ pipeline{
       }
     }
 
-    stage {
+    stage("Third Stage") {
       steps{
         script{
           print("sleeping for 10 secs")
@@ -35,7 +35,7 @@ pipeline{
       }
     }
 
-    stage {
+    stage("Fourth Stage") {
       steps{
         script{
           print("sleeping for 10 secs")
