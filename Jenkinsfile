@@ -17,8 +17,7 @@ pipeline{
     stage("Second Stage"){
       steps{
         script{
-          print("sleeping for 10 secs")
-          sleep(10)
+          input(message: "Proceed or abort?")
           print(ok)
         }
       }
@@ -27,8 +26,7 @@ pipeline{
     stage("Third Stage") {
       steps{
         script{
-          print("sleeping for 10 secs")
-          sleep(10)
+          input(message: "Proceed or abort?")
           print(ok)
         }
       }
@@ -37,8 +35,7 @@ pipeline{
     stage("Fourth Stage") {
       steps{
         script{
-          print("sleeping for 10 secs")
-          sleep(10)
+          input(message: "Proceed or abort?")
           print(ok)
         }
       }
