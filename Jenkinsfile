@@ -14,5 +14,35 @@ pipeline{
         }
       }
     }
+
+    stage {
+      steps{
+        script{
+          print("sleeping for 10 secs")
+          sleep(10)
+          print(ok)
+        }
+      }
+    }
+
+    stage {
+      steps{
+        script{
+          print("sleeping for 10 secs")
+          sleep(10)
+          print(ok)
+        }
+      }
+    }
+
+    stage {
+      steps{
+        script{
+          print("sleeping for 10 secs")
+          sleep(10)
+          print(ok)
+        }
+      }
+    }
   }
 }

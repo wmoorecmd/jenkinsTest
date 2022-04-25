@@ -1,4 +1,3 @@
-Boolean call(){
-    error("test error")
-    return true
+def call(){
+    return "true"
 }
