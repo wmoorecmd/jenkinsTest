@@ -3,12 +3,13 @@
 pipeline{
   agent any
   environment{
-        ok = testEnv()
+        ok = "testEnv()"
       }
   stages{
     stage('Create PagerDuty Maintenance Window'){
       steps{
         script{
+          ok = testEnv()
           print(ok)
         }
       }
