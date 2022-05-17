@@ -1,4 +1,4 @@
-def call(Map testMap){
+def call(Map testMap = [:]){
     if(!testMap.containsKey('region')){
         testMap.region = 'ca-central-1'
     }
