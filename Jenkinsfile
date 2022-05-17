@@ -14,32 +14,5 @@ pipeline{
         }
       }
     }
-
-    stage("Second Stage"){
-      steps{
-        script{
-          input(message: "Proceed or abort?")
-          print(ok)
-        }
-      }
-    }
-
-    stage("Third Stage") {
-      steps{
-        script{
-          input(message: "Proceed or abort?")
-          print(ok)
-        }
-      }
-    }
-
-    stage("Fourth Stage") {
-      steps{
-        script{
-          input(message: "Proceed or abort?")
-          print(ok)
-        }
-      }
-    }
   }
 }
