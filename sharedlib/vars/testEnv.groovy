@@ -1,4 +1,4 @@
-def call(Map testMap = [region: "ca-central-1"]String testString = "this is a test"){
+def call(Map testMap = [region: "ca-central-1"], String testString = "this is a test"){
     String region = ""
     if(testMap.containsKey("testKey")){
         region = testMap.testKey
