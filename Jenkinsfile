@@ -9,8 +9,9 @@ pipeline{
     stage('Create PagerDuty Maintenance Window'){
       steps{
         script{
-          testEnv("string here")
-          testEnv("not a string", region: "us-east-1")
+          testEnv()
+          testEnv(testString: "string here")
+          testEnv(testString: "not a string", region: "us-east-1")
           print(ok)
         }
       }

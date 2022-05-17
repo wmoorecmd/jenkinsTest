@@ -1,4 +1,4 @@
-def call(Map testMap = [region: "ca-central-1"], String testString = "this is a test"){
+def call(Map testMap = [region: "ca-central-1", testString: "this is a test"]){
     String region = ""
     if(testMap.containsKey("testKey")){
         region = testMap.testKey
@@ -7,7 +7,7 @@ def call(Map testMap = [region: "ca-central-1"], String testString = "this is a 
         withCredentials([string(credentialsId: 'SUPER_SECRET', variable: 'THE_SECRET')]){
             sh 'echo $THE_SECRET'
             sh 'echo $AWS_DEFAULT_REGION'
-            sh "echo ${testString}"
+            sh "echo ${testMap.testString}"
         }
     }
 }
