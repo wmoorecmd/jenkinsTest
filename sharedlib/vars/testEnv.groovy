@@ -1,8 +1,8 @@
 def call(){
-    withEnv(['THE_ENV_VAR=thisisavariable']){
+    withEnv(['AWS_DEFAULT_REGION=ca-central-1']){
         withCredentials([string(credentialsId: 'SUPER_SECRET', variable: 'THE_SECRET')]){
             sh 'echo $THE_SECRET'
-            sh 'echo $THE_ENV_VAR'
+            sh 'echo $AWS_DEFAULT_REGION'
         }
     }
 }
