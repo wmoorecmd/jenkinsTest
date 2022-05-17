@@ -11,6 +11,7 @@ pipeline{
         script{
           testEnv()
           testEnv(testString: "string here")
+          testEnv(region: "us-east-1")
           testEnv(testString: "not a string", region: "us-east-1")
           print(ok)
         }
