@@ -9,8 +9,10 @@ pipeline{
 
     stages{
         stage(""){
-            withCredentials([string(credentialsId: 'tf_aws_poweruser_access_key_id', variable: 'AWS_ACCESS_KEY_ID'), string(credentialsId: 'tf_aws_poweruser_access_secret', variable: 'AWS_SECRET_ACCESS_KEY')]) {
-                print("Here")
+            steps{
+                withCredentials([string(credentialsId: 'tf_aws_poweruser_access_key_id', variable: 'AWS_ACCESS_KEY_ID'), string(credentialsId: 'tf_aws_poweruser_access_secret', variable: 'AWS_SECRET_ACCESS_KEY')]) {
+                    print("Here")
+                }
             }
         }
     }
