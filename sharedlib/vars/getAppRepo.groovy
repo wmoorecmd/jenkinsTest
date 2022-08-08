@@ -6,7 +6,7 @@ def getCloudConnect(v = null, location = '.') {
     return getInfraRepo('CloudConnect', v, location)
 }
 
-def getAppRepo(repo, v, location = '.') {
+def call(repo, v, location = '.') {
     def svn_url = "https://subversion.assembla.com/svn/CognisantMD"
     if (v?.equals('trunk')) {
         svn_url += "/${repo}"
