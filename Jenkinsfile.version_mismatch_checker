@@ -49,11 +49,14 @@ pipeline {
                             def target = it
 
                             //get the current assembla version to pin the version to for both branches
-                            def trunkRepo = getAppRepo(target.app, v = "trunk", "${target.app}/")
-                            def trunkAnchorVersion = trunkRepo.SVN_REVISION
+                            // def trunkRepo = getAppRepo(target.app, v = "trunk", "${target.app}/")
+                            // def trunkAnchorVersion = trunkRepo.SVN_REVISION
 
-                            def releaseRepo = getAppRepo(target.app, v = null, "${target.app}/")
-                            def releaseAnchorVersion = releaseRepo.SVN_REVISION
+                            // def releaseRepo = getAppRepo(target.app, v = null, "${target.app}/")
+                            // def releaseAnchorVersion = releaseRepo.SVN_REVISION
+
+                            def releaseAnchorVersion = "25000"
+                            def trunkAnchorVersion = "25000"
 
                             // Get deployed version of app in environment
                             def deployedVersion = sh(script: "curl ${ target.url } | grep 'SVN Revision:' | awk '{print \$3}'", returnStdout: true).trim()
