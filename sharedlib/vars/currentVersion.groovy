@@ -11,9 +11,9 @@ def call(String currentReleaseFile = 'current_release.txt') {
     withEnv(["AWS_DEFAULT_REGION=${region}"]) {
         withCredentials([string(credentialsId: 'tf_aws_poweruser_access_key_id', variable: 'AWS_ACCESS_KEY_ID'),
                          string(credentialsId: 'tf_aws_poweruser_access_secret', variable: 'AWS_SECRET_ACCESS_KEY')]) {
-            def fileRet = sh script: "/usr/local/bin/aws s3 ls s3://releases.cognisantmd.com/${currentReleaseFile}", returnStatus: true
+            def fileRet = sh script: "aws s3 ls s3://wmooretestbucket/${currentReleaseFile}", returnStatus: true
             if (fileRet == 0) {
-                sh "/usr/local/bin/aws s3 cp s3://releases.cognisantmd.com/${currentReleaseFile} ."
+                sh "aws s3 cp s3://wmooretestbucket/${currentReleaseFile} ."
                 def val = sh script: "cat ${currentReleaseFile}", returnStdout: true
                 println val
                 return val
