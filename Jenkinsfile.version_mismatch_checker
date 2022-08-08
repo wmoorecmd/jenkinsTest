@@ -1,17 +1,135 @@
-pipeline{
+pipeline {
     agent any
 
     options {
-        timeout(time: 20, unit: 'MINUTES')
+        timeout(time: 5, unit: 'MINUTES')
         disableConcurrentBuilds()
         disableResume()
+        buildDiscarder logRotator(
+            daysToKeepStr: "5",
+            numToKeepStr: "120"
+        )
     }
 
-    stages{
-        stage(""){
-            steps{
-                withCredentials([string(credentialsId: 'tf_aws_poweruser_access_key_id', variable: 'AWS_ACCESS_KEY_ID'), string(credentialsId: 'tf_aws_poweruser_access_secret', variable: 'AWS_SECRET_ACCESS_KEY')]) {
-                    print("Here")
+    triggers {
+        cron('H/50 * * * *')
+    }
+
+    parameters {
+        choice(name: 'slack_channel', choices: ['#operations', '#robotparty'], description: 'The slack channel to notify on failure')
+    }
+
+    stages {
+        stage('Validating Current Release Versions') {
+            steps {
+                withCredentials([string(credentialsId: 'tf_aws_poweruser_access_key_id', variable: 'AWS_ACCESS_KEY_ID'),
+                                 string(credentialsId: 'tf_aws_poweruser_access_secret', variable: 'AWS_SECRET_ACCESS_KEY')]) {
+                    script {
+                        def currentRelease = currentVersion('current_release.txt')
+                        def candidateRelease = currentVersion('candidate_release.txt')
+
+                        // Get target version
+                        def targets = [
+                            [
+                                url: "https://ocean.cognisantmd.com/healthCheck",
+                                app: "Ocean",
+                                env: "prod"
+                            ],
+
+                            [
+                                url: "https://cloudconnect.cognisantmd.com/healthCheck",
+                                app: "CloudConnect",
+                                env: "prod"
+                            ]
+                        ]
+
+                        targets.each {
+                            def target = it
+
+                            //get the current assembla version to pin the version to for both branches
+                            def releaseRepo = getAppRepo(target.app, null, "${target.app}/")
+                            def releaseAnchorVersion = releaseRepo.SVN_REVISION
+
+                            def trunkRepo = getAppRepo(target.app, "trunk", "${target.app}/")
+                            def trunkAnchorVersion = trunkRepo.SVN_REVISION
+
+                            // Get deployed version of app in environment
+                            def deployedVersion = sh(script: "curl ${ target.url } | grep 'SVN Revision:' | awk '{print \$3}'", returnStdout: true).trim()
+                            println ("Deployed Version [${ target.app }.${ target.env }]: " + deployedVersion)
+
+                            // Get latest built package version for app
+                            def s3Url = "s3://releases.cognisantmd.com/${ target.app }/${ currentRelease }/"
+                            def latestVersion = sh(script: "/usr/local/bin/aws s3 ls $s3Url | sort | tail -1 | awk '{print \$4}'", returnStdout: true).trim()
+                            println ("Latest Version [${ target.app }]: " + latestVersion)
+
+                            // Always need to check release branch
+                            if (!releaseAnchorVersion.equals(deployedVersion)) {
+                                println ("SVN version, deployed version mismatch found")
+                                // sendSlackMessage(
+                                //         app: target.app,
+                                //         env: target.env,
+                                //         msg: "Version mismatch (SVN version: ${ releaseAnchorVersion }, latestVersion: ${ deployedVersion })",
+                                //         color: 'warning',
+                                //         slack_channel: params.slack_channel
+                                // )
+                            }
+
+                            if (!releaseAnchorVersion.equals(latestVersion)) {
+                                println ("SVN version, latest version mismatch found")
+                                // sendSlackMessage(
+                                //         app: target.app,
+                                //         env: target.env,
+                                //         msg: "Version mismatch (SVN version: ${ releaseAnchorVersion }, latestVersion: ${ latestVersion })",
+                                //         color: 'warning',
+                                //         slack_channel: params.slack_channel
+                                // )
+                            }
+
+                            // Compare version files
+                            if (!currentRelease.equals(candidateRelease)){
+                                // Version files are different, we need to check trunk as well
+                                if (!trunkAnchorVersion.equals(deployedVersion)) {
+                                    println ("SVN version, deployed version mismatch found")
+                                    // sendSlackMessage(
+                                    //         app: target.app,
+                                    //         env: target.env,
+                                    //         msg: "Version mismatch (SVN version: ${ trunkAnchorVersion }, latestVersion: ${ deployedVersion })",
+                                    //         color: 'warning',
+                                    //         slack_channel: params.slack_channel
+                                    // )
+                                }
+
+                                if (!trunkAnchorVersion.equals(latestVersion)) {
+                                    println ("SVN version, latest version mismatch found")
+                                    // sendSlackMessage(
+                                    //         app: target.app,
+                                    //         env: target.env,
+                                    //         msg: "Version mismatch (SVN version: ${ trunkAnchorVersion }, latestVersion: ${ latestVersion })",
+                                    //         color: 'warning',
+                                    //         slack_channel: params.slack_channel
+                                    // )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            script {
+                if (currentBuild.currentResult == 'SUCCESS') {
+                    echo 'All envs are running latest release versions'
+                } else {
+                    // sendSlackMessage(
+                    //     app: 'Compare Current Releases',
+                    //     env: 'JenkinsJob',
+                    //     msg: 'Job failed. What happened?',
+                    //     color: 'danger',
+                    //     slack_channel: params.slack_channel
+                    // )
                 }
             }
         }
