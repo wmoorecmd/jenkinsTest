@@ -59,9 +59,10 @@ pipeline {
 
                             // Get latest built package version for app
                             def s3Url = "s3://releases.cognisantmd.com/${ target.app }/${ currentRelease }/"
-                            def latestVersion = sh(script: "/usr/local/bin/aws s3 ls $s3Url | sort | tail -1 | awk '{print \$4}'", returnStdout: true).trim()
+                            def s3Url = "s3://wmooretestbucket/${ target.app }/${ currentRelease }/"
+                            def match = sh(script: "/usr/local/bin/aws s3 ls $s3Url | sort | tail -1 | awk '{print \$4}'", returnStdout: true).trim() =~ "([0-9]+)"
                             println ("Latest Version [${ target.app }]: " + latestVersion)
-
+                            def latestVersion = match[0][0]
                             // Always need to check release branch
                             if (!releaseAnchorVersion.equals(deployedVersion)) {
                                 println ("SVN version, deployed version mismatch found")
