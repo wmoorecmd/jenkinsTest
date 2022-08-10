@@ -90,6 +90,7 @@ pipeline {
                             if (!(currentRelease.equals(candidateRelease) && target.env.equals("staging"))) {
                                 if (!anchorVersion.equals(deployedVersion)) {
                                     println(anchorVersion != deployedVersion)
+                                    println(anchorVersion - deployedVersion)
                                     println("SVN version, deployed version mismatch found")
                                     // sendSlackMessage(
                                     //         app: target.app,
