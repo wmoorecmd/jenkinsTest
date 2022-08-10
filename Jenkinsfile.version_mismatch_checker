@@ -89,6 +89,7 @@ pipeline {
                             // Compare version files: We want to enter here for staging only when currentRelease != candidate release.
                             if (!(currentRelease.equals(candidateRelease) && target.env.equals("staging"))) {
                                 if (!anchorVersion.equals(deployedVersion)) {
+                                    println(!anchorVersion.equals(deployedVersion))
                                     println("SVN version, deployed version mismatch found")
                                     // sendSlackMessage(
                                     //         app: target.app,
@@ -100,6 +101,7 @@ pipeline {
                                 }
 
                                 if (!anchorVersion.equals(latestVersion)) {
+                                    println(!anchorVersion.equals(latestVersion))
                                     println("SVN version, latest version mismatch found")
                                     // sendSlackMessage(
                                     //         app: target.app,
