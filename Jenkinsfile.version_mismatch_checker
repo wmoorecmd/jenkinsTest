@@ -66,7 +66,7 @@ pipeline {
                             // Get both current and candidate SVN version to use as an anchor for the version check
                             // def repo = getAppRepo("${ target.releaseVersion }/${ target.app }", v = null, "release${ target.app }/")
                             // def anchorVersion = repo.SVN_REVISION
-                            def anchorVersion = 25000
+                            def anchorVersion = "25000"
                             println ("SVN Version [${ target.app }.${ target.env }]: " + anchorVersion)
 
                             // Delete the cloned repository
@@ -89,8 +89,6 @@ pipeline {
                             // Compare version files: We want to enter here for staging only when currentRelease != candidate release.
                             if (!(currentRelease.equals(candidateRelease) && target.env.equals("staging"))) {
                                 if (!anchorVersion.equals(deployedVersion)) {
-                                    println(anchorVersion != deployedVersion)
-                                    println(anchorVersion - deployedVersion)
                                     println("SVN version, deployed version mismatch found")
                                     // sendSlackMessage(
                                     //         app: target.app,
@@ -102,7 +100,6 @@ pipeline {
                                 }
 
                                 if (!anchorVersion.equals(latestVersion)) {
-                                    println(anchorVersion != latestVersion)
                                     println("SVN version, latest version mismatch found")
                                     // sendSlackMessage(
                                     //         app: target.app,
