@@ -82,9 +82,9 @@ pipeline {
                             def latestVersion = matchRelease[0][0]
                             println ("Latest Release Version [${ target.app }.${ target.env }]: " + latestVersion)
 
-                            println("Anchor: START${anchorVersion}END")
-                            println("Deployed: START${deployedVersion}END")
-                            println("Latest: START${latestVersion}END")
+                            println("Anchor: START${anchorVersion.getClass()}END")
+                            println("Deployed: START${deployedVersion.getClass()}END")
+                            println("Latest: START${latestVersion.getClass()}END")
 
                             // Compare version files: We want to enter here for staging only when currentRelease != candidate release.
                             if (!(currentRelease.equals(candidateRelease) && target.env.equals("staging"))) {
