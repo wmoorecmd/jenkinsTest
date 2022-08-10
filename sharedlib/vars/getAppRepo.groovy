@@ -1,17 +1,9 @@
-def getOcean(v = null, location = '.') {
-    return getInfraRepo('Ocean', v, location)
-}
-
-def getCloudConnect(v = null, location = '.') {
-    return getInfraRepo('CloudConnect', v, location)
-}
-
-def call(repo, v, location = '.') {
+def getAppRepo(repo, v, location = '.') {
     def svn_url = "https://subversion.assembla.com/svn/CognisantMD"
     if (v?.equals('trunk')) {
-        svn_url += "/${repo}"
+        svn_url += "/app/${repo}"
     } else {
-        svn_url += "/releases/${repo}"
+        svn_url += "/releases/app/${repo}"
     }
     return checkout([
             $class          : 'SubversionSCM',

@@ -1,5 +1,4 @@
 @Library('sharedlib@main')_
-
 pipeline {
     agent any
 
@@ -32,85 +31,76 @@ pipeline {
 
                         // Get target version
                         def targets = [
-                            [
-                                url: "https://ocean.cognisantmd.com/healthCheck",
-                                app: "Ocean",
-                                env: "prod"
-                            ],
+                                [
+                                        url: "https://ocean.cognisantmd.com/healthCheck",
+                                        app: "Ocean",
+                                        env: "prod",
+                                        releaseVersion: currentRelease
+                                ],
 
-                            [
-                                url: "https://cloudconnect.cognisantmd.com/healthCheck",
-                                app: "CloudConnect",
-                                env: "prod"
-                            ]
+                                [
+                                        url: "https://cloudconnect.cognisantmd.com/healthCheck",
+                                        app: "CloudConnect",
+                                        env: "prod",
+                                        releaseVersion: currentRelease
+                                ],
+
+                                [
+                                        url: "https://staging.cognisantmd.com/healthCheck",
+                                        app: "Ocean",
+                                        env: "staging",
+                                        releaseVersion: candidateRelease
+                                ],
+
+                                [
+                                        url: "https://stagingcc.cognisantmd.com/healthCheck",
+                                        app: "CloudConnect",
+                                        env: "staging",
+                                        releaseVersion: candidateRelease
+                                ]
                         ]
 
                         targets.each {
                             def target = it
 
-                            //get the current assembla version to pin the version to for both branches
-                            // def trunkRepo = getAppRepo(target.app, v = "trunk", "${target.app}/")
-                            // def trunkAnchorVersion = trunkRepo.SVN_REVISION
+                            // Get both current and candidate SVN version to use as an anchor for the version check
+                            // def repo = getAppRepo("${ target.releaseVersion }/${ target.app }", v = null, "release${ target.app }/")
+                            // def anchorVersion = repo.SVN_REVISION
+                            def anchorVersion = 25000
+                            println ("SVN Version [${ target.app }.${ target.env }]: " + anchorVersion)
 
-                            // def releaseRepo = getAppRepo(target.app, v = null, "${target.app}/")
-                            // def releaseAnchorVersion = releaseRepo.SVN_REVISION
+                            // Delete the cloned repository
+                            // sh(script: "rm -rf release${ target.app }/")
 
-                            def releaseAnchorVersion = "25000"
-                            def trunkAnchorVersion = "25000"
-
-                            // Get deployed version of app in environment
+                            // Get deployed release version of app in environment
                             def deployedVersion = sh(script: "curl ${ target.url } | grep 'SVN Revision:' | awk '{print \$3}'", returnStdout: true).trim()
                             println ("Deployed Version [${ target.app }.${ target.env }]: " + deployedVersion)
 
-                            // Get latest built package version for app
-                            def s3Url = "s3://releases.cognisantmd.com/${ target.app }/${ currentRelease }/"
-                            s3Url = "s3://wmooretestbucket/${ target.app }/${ currentRelease }/"
-                            def match = sh(script: "/usr/local/bin/aws s3 ls ${ s3Url } | sort | tail -1 | awk '{print \$4}'", returnStdout: true).trim() =~ "([0-9]+)"
-                            def latestVersion = match[0][0]
-                            println ("Latest Version [${ target.app }]: " + latestVersion)
-                            // Always need to check release branch
-                            if (!releaseAnchorVersion.equals(deployedVersion)) {
-                                println ("SVN version, deployed version mismatch found")
-                                // sendSlackMessage(
-                                //         app: target.app,
-                                //         env: target.env,
-                                //         msg: "Version mismatch (SVN version: ${ releaseAnchorVersion }, latestVersion: ${ deployedVersion })",
-                                //         color: 'warning',
-                                //         slack_channel: params.slack_channel
-                                // )
-                            }
+                            // Get latest built release package version for app
+                            def s3Url = "s3://releases.cognisantmd.com/${ target.app }/${ target.releaseVersion }/"
+                            def matchRelease = sh(script: "/usr/local/bin/aws s3 ls ${ s3Url } | sort | tail -1 | awk '{print \$4}'", returnStdout: true).trim() =~ "([0-9]+)"
+                            def latestVersion = matchRelease[0][0]
+                            println ("Latest Release Version [${ target.app }.${ target.env }]: " + latestVersion)
 
-                            if (!releaseAnchorVersion.equals(latestVersion)) {
-                                println ("SVN version, latest version mismatch found")
-                                // sendSlackMessage(
-                                //         app: target.app,
-                                //         env: target.env,
-                                //         msg: "Version mismatch (SVN version: ${ releaseAnchorVersion }, latestVersion: ${ latestVersion })",
-                                //         color: 'warning',
-                                //         slack_channel: params.slack_channel
-                                // )
-                            }
-
-                            // Compare version files
-                            if (!currentRelease.equals(candidateRelease)){
-                                // Version files are different, we need to check trunk as well
-                                if (!trunkAnchorVersion.equals(deployedVersion)) {
-                                    println ("SVN version, deployed version mismatch found")
+                            // Compare version files: We want to enter here for staging only when currentRelease != candidate release.
+                            if (!(currentRelease.equals(candidateRelease) && target.env.equals("staging"))) {
+                                if (!anchorVersion.equals(deployedVersion)) {
+                                    println("SVN version, deployed version mismatch found")
                                     // sendSlackMessage(
                                     //         app: target.app,
                                     //         env: target.env,
-                                    //         msg: "Version mismatch (SVN version: ${ trunkAnchorVersion }, latestVersion: ${ deployedVersion })",
+                                    //         msg: "Version mismatch (SVN version: ${ anchorVersion }, deployedVersion: ${ deployedVersion })",
                                     //         color: 'warning',
                                     //         slack_channel: params.slack_channel
                                     // )
                                 }
 
-                                if (!trunkAnchorVersion.equals(latestVersion)) {
-                                    println ("SVN version, latest version mismatch found")
+                                if (!anchorVersion.equals(latestVersion)) {
+                                    println("SVN version, latest version mismatch found")
                                     // sendSlackMessage(
                                     //         app: target.app,
                                     //         env: target.env,
-                                    //         msg: "Version mismatch (SVN version: ${ trunkAnchorVersion }, latestVersion: ${ latestVersion })",
+                                    //         msg: "Version mismatch (SVN version: ${ anchorVersion }, latestVersion: ${ latestVersion })",
                                     //         color: 'warning',
                                     //         slack_channel: params.slack_channel
                                     // )
@@ -129,13 +119,13 @@ pipeline {
                 if (currentBuild.currentResult == 'SUCCESS') {
                     echo 'All envs are running latest release versions'
                 } else {
-                    // sendSlackMessage(
-                    //     app: 'Compare Current Releases',
-                    //     env: 'JenkinsJob',
-                    //     msg: 'Job failed. What happened?',
-                    //     color: 'danger',
-                    //     slack_channel: params.slack_channel
-                    // )
+                    sendSlackMessage(
+                            app: 'Compare Current Releases',
+                            env: 'JenkinsJob',
+                            msg: 'Job failed. What happened?',
+                            color: 'danger',
+                            slack_channel: params.slack_channel
+                    )
                 }
             }
         }
