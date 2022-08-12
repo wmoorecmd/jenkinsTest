@@ -126,7 +126,7 @@ def getLatestVersion(target) {
     withCredentials([string(credentialsId: 'tf_aws_poweruser_access_key_id', variable: 'AWS_ACCESS_KEY_ID'),
                      string(credentialsId: 'tf_aws_poweruser_access_secret', variable: 'AWS_SECRET_ACCESS_KEY')]) {
 
-        def s3Url = "s3://releases.cognisantmd.com/${target.app}/${target.releaseVersion}/"
+        def s3Url = "s3://wmooretestbucket/${target.app}/${target.releaseVersion}/"
         def matchRelease = sh(
                 script: "/usr/local/bin/aws s3 ls ${s3Url} | sort | tail -1 | awk '{print \$4}'",
                 returnStdout: true
