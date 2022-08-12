@@ -67,7 +67,7 @@ pipeline {
                         //         name: "SVN Version",
                         //         version: getSVNVersion("${it.releaseVersion}/${it.app}", v = null)
                         // )
-                        def svnVersion = new Version(name: "SVN Version", version: "25000")
+                        def svnVersion = [name: "SVN Version", version: "25000"]
                         compareVersions(svnVersion, getDeployedVersion(it), it)
                         compareVersions(svnVersion, getLatestVersion(it), it)
                     }
@@ -95,11 +95,6 @@ pipeline {
     }
 }
 
-class Version {
-    String version
-    String name
-}
-
 def compareVersions(anchorVersion, compVersion, target) {
     if (!anchorVersion.version.equals(compVersion.version)) {
         println("${anchorVersion.name}, ${compVersion.name} mismatch found")
@@ -115,10 +110,10 @@ def compareVersions(anchorVersion, compVersion, target) {
 
 //returns the version of the package running in the given environment
 def getDeployedVersion(target) {
-    return new Version(
+    return [
             name: "Deployed Version",
             version: sh(script: "curl ${target.url} | grep 'SVN Revision:' | awk '{print \$3}'", returnStdout: true).trim()
-    )
+    ]
 }
 
 //returns the version of the most recently built package
@@ -131,9 +126,9 @@ def getLatestVersion(target) {
                 script: "/usr/local/bin/aws s3 ls ${s3Url} | sort | tail -1 | awk '{print \$4}'",
                 returnStdout: true
         ).trim() =~ "([0-9]+)"
-        return new Version(
+        return [
                 name: "Latest Release Version",
                 version: matchRelease[0][0]
-        )
+        ]
     }
 }
