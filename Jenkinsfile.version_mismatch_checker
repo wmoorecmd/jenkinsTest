@@ -67,7 +67,7 @@ pipeline {
                         //         name: "SVN Version",
                         //         version: getSVNVersion("${it.releaseVersion}/${it.app}", v = null)
                         // )
-                        def svnVersion = new Version(name: "SVN Version", version: "2500")
+                        def svnVersion = new Version(name: "SVN Version", version: "25000")
                         compareVersions(svnVersion, getDeployedVersion(it), it)
                         compareVersions(svnVersion, getLatestVersion(it), it)
                     }
