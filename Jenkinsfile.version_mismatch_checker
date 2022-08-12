@@ -81,13 +81,13 @@ pipeline {
                 if (currentBuild.currentResult == 'SUCCESS') {
                     echo 'All envs are running latest release versions'
                 } else {
-                    sendSlackMessage(
-                            app: 'Compare Current Releases',
-                            env: 'JenkinsJob',
-                            msg: 'Job failed. What happened?',
-                            color: 'danger',
-                            slack_channel: params.slack_channel
-                    )
+                    // sendSlackMessage(
+                    //         app: 'Compare Current Releases',
+                    //         env: 'JenkinsJob',
+                    //         msg: 'Job failed. What happened?',
+                    //         color: 'danger',
+                    //         slack_channel: params.slack_channel
+                    // )
                 }
             }
         }
@@ -102,13 +102,13 @@ class Version {
 def compareVersions(anchorVersion, compVersion, target) {
     if (!anchorVersion.version.equals(compVersion.version)) {
         println("${anchorVersion.name}, ${compVersion.name} mismatch found")
-        sendSlackMessage(
-                app: target.app,
-                env: target.env,
-                msg: "Version mismatch (${anchorVersion.name}: ${anchorVersion.version}, ${compVersion.name}: ${compVersion.version})",
-                color: 'warning',
-                slack_channel: params.slack_channel
-        )
+        // sendSlackMessage(
+        //         app: target.app,
+        //         env: target.env,
+        //         msg: "Version mismatch (${anchorVersion.name}: ${anchorVersion.version}, ${compVersion.name}: ${compVersion.version})",
+        //         color: 'warning',
+        //         slack_channel: params.slack_channel
+        // )
     }
 }
 
